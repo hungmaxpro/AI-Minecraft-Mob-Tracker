@@ -1,0 +1,24 @@
+# 1. Bỏ qua các file dữ liệu thô và file nén (Tránh tràn dung lượng GitHub)
+*.zip
+*.rar
+dataset/
+datasets/
+
+# 2. Bỏ qua mô hình PyTorch gốc (Chỉ giữ lại .onnx và openvino)
+*.pt
+runs/
+
+# 3. Bỏ qua rác hệ thống của Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 4. Bỏ qua môi trường ảo (Virtual Environment)
+.env
+.venv/
+venv/
+env/
+
+# 5. Bỏ qua rác hệ điều hành (Windows/Mac)
+.DS_Store
+Thumbs.db
