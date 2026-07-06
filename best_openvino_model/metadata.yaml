@@ -1,6 +1,6 @@
 description: Ultralytics YOLO11n model trained on /content/dataset/data.yaml
 author: Ultralytics
-date: '2026-07-06T00:23:40.157781'
+date: '2026-07-06T17:13:23.083769'
 version: 8.4.88
 license: AGPL-3.0 License (https://ultralytics.com/license)
 docs: https://docs.ultralytics.com
@@ -9,8 +9,8 @@ task: detect
 head: Detect
 batch: 1
 imgsz:
-- 320
-- 320
+- 640
+- 640
 names:
   0: cat
   1: chicken
