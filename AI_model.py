@@ -32,7 +32,7 @@ def ai_worker():
         frame = cv2.cvtColor(np.array(sct_img), cv2.COLOR_BGRA2BGR)
         
         # Chạy AI trên Intel Iris Xe GPU ở size 640 để có độ nét
-        results = model.predict(source=frame, conf=0.65, imgsz=640, verbose=False, device="intel:gpu")
+        results = model.predict(source=frame, conf=0.45, imgsz=640, verbose=False, device="intel:gpu")
         
         temp_boxes = []
         for box in results[0].boxes:
