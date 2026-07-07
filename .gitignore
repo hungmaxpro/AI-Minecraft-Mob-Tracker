@@ -22,3 +22,13 @@ env/
 # 5. Bỏ qua rác hệ điều hành (Windows/Mac)
 .DS_Store
 Thumbs.db
+
+# Bỏ qua các file build sinh ra từ PyInstaller
+build/
+dist/
+*.spec
+
+# Bỏ qua môi trường ảo và rác hệ thống
+__pycache__/
+.venv/
+*.pt
