@@ -11,9 +11,7 @@ import keyboard
 import os
 from ultralytics import YOLO
 
-# =====================================================================
 # ÉP WINDOWS TRẢ VỀ ĐÚNG ĐỘ PHÂN GIẢI THỰC (CHỐNG LỖI HIỂN THỊ SCALE)
-# =====================================================================
 try:
     import ctypes
     ctypes.windll.shcore.SetProcessDpiAwareness(2) # Kích hoạt chế độ DPI thực cho Windows 8.1/10/11
@@ -24,9 +22,12 @@ except Exception:
         pass
 
 # Ép Terminal Windows dùng UTF-8
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
-
+try:
+    if sys.stdout is not None and hasattr(sys.stdout, 'encoding'):
+        if sys.stdout.encoding != 'utf-8':
+            sys.stdout.reconfigure(encoding='utf-8')
+except Exception:
+    pass
 # Biến toàn cục
 detected_boxes = []
 ai_fps = 0.0
@@ -37,9 +38,7 @@ current_monitor = None
 W_SCREEN, H_SCREEN = 1920, 1080
 ai_model = None 
 
-# =====================================================================
 # HÀM TÌM CỬA SỔ MINECRAFT TỰ ĐỘNG
-# =====================================================================
 def get_mc_window():
     windows = gw.getWindowsWithTitle('Minecraft')
     for win in windows:
@@ -49,9 +48,7 @@ def get_mc_window():
             return {"top": win.top, "left": win.left, "width": win.width, "height": win.height}
     return None
 
-# =====================================================================
 # LUỒNG AI
-# =====================================================================
 def ai_worker():
     global detected_boxes, ai_fps, is_running, current_monitor, ai_model, should_return, mc_not_found
     
@@ -110,9 +107,7 @@ def ai_worker():
             
     print("🛑 Đã dừng luồng AI!")
 
-# =====================================================================
 # XỬ LÝ PHÍM TẮT QUAY VỀ MENU (Ctrl+Shift+F)
-# =====================================================================
 def trigger_return():
     global should_return, is_running
     if is_running:
@@ -121,9 +116,7 @@ def trigger_return():
 
 keyboard.add_hotkey('ctrl+shift+f', trigger_return)
 
-# =====================================================================
 # LUỒNG UI OVERLAY (Kính trong suốt toàn màn hình)
-# =====================================================================
 def start_overlay():
     global W_SCREEN, H_SCREEN, should_return, is_running, mc_not_found
     
@@ -175,9 +168,7 @@ def start_overlay():
     update_ui()
     overlay.mainloop()
 
-# =====================================================================
 # GIAO DIỆN KHỞI ĐỘNG (LAUNCHER)
-# =====================================================================
 def show_launcher(show_error=False):
     global should_return, is_running, detected_boxes, current_monitor, mc_not_found
     
