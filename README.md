@@ -11,7 +11,7 @@ The technical highlight of this project is its extreme hardware optimization (Ed
 
 ---
 
-## 🚀 Core Technologies & Features
+## Core Technologies & Features
 
 * **Hardware Acceleration:** The AI model is quantized (FP16) and compiled specifically for the Intel ecosystem using **OpenVINO**. The computational load is offloaded to the iGPU to free up CPU resources.
 * **Multi-threading Architecture:** The system is separated into two independent threads. The UI Render thread ensures a smooth 60 FPS interface, while the AI Inference thread runs in the background to process image data without causing rendering bottlenecks.
@@ -56,5 +56,5 @@ Building this project from scratch to a deployable executable was a hands-on jou
 
 ---
 
-## 🛠️ Supported Mobs
+## Supported Mobs
 `Cow`, `Pig`, `Sheep`, `Chicken`, `Horse`, `Dog`, `Villager`, `Iron Golem`
