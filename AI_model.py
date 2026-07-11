@@ -10,7 +10,6 @@ import keyboard
 import socket
 from ultralytics import YOLO
 
-# Ép Terminal Windows dùng UTF-8
 try:
     if sys.stdout is not None and hasattr(sys.stdout, 'encoding'):
         if sys.stdout.encoding != 'utf-8':
@@ -18,11 +17,10 @@ try:
 except Exception:
     pass
 
-# Biến toàn cục
 is_running = False
 ai_model = None 
+ai_fps = 0.0
 
-# CẤU HÌNH UDP BẮN TỌA ĐỘ SANG C++
 UDP_IP = "127.0.0.1"
 UDP_PORT = 9999
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,13 +35,15 @@ def get_mc_window():
     return None
 
 def ai_worker():
-    global is_running, ai_model
+    global is_running, ai_model, ai_fps
     
     if ai_model is None:
         print("Đang nạp AI OpenVINO...")
         ai_model = YOLO("best_openvino_model", task="detect")
         
     sct = MSS()
+    fps_start_time = time.time()
+    fps_counter = 0
     
     while is_running:
         monitor = get_mc_window()
@@ -58,37 +58,45 @@ def ai_worker():
         
         results = ai_model.predict(source=frame, conf=0.45, imgsz=640, verbose=False, device="intel:gpu")
         
-        data_string = ""
+        fps_counter += 1
+        if (time.time() - fps_start_time) > 1:
+            ai_fps = fps_counter / (time.time() - fps_start_time)
+            fps_counter = 0
+            fps_start_time = time.time()
+            
+        # GÓI DỮ LIỆU CHUẨN: FPS | Khung_MC | Box_Quái_Vật
+        L, T = monitor["left"], monitor["top"]
+        R, B = L + monitor["width"], T + monitor["height"]
+        base_info = f"{ai_fps:.1f}|{L},{T},{R},{B}"
+        
+        mob_data = ""
         for box in results[0].boxes:
             x1, y1, x2, y2 = box.xyxy[0].tolist()
             cls_id = int(box.cls[0])
             name = results[0].names[cls_id]
             
-            real_x1 = int(x1) + monitor["left"]
-            real_y1 = int(y1) + monitor["top"]
-            real_x2 = int(x2) + monitor["left"]
-            real_y2 = int(y2) + monitor["top"]
+            real_x1 = int(x1) + L
+            real_y1 = int(y1) + T
+            real_x2 = int(x2) + L
+            real_y2 = int(y2) + T
             
-            data_string += f"{real_x1},{real_y1},{real_x2},{real_y2},{name}|"
+            mob_data += f"|{real_x1},{real_y1},{real_x2},{real_y2},{name}"
             
-        if data_string:
-            data_string = data_string.rstrip('|')
-        else:
-            data_string = "EMPTY"
+        if not mob_data:
+            mob_data = "|NO_MOB"
             
-        # Bắn chuỗi dữ liệu sang C++
-        sock.sendto(data_string.encode('utf-8'), (UDP_IP, UDP_PORT))
+        final_payload = base_info + mob_data
+        sock.sendto(final_payload.encode('utf-8'), (UDP_IP, UDP_PORT))
+   
+        # Thêm dòng này để nhìn thấy Python đang chạy
+        print(f"\r[Gửi UDP] FPS: {ai_fps:.1f} | Mobs: {len(results[0].boxes)}", end="", flush=True)
 
-# ==========================================
-# GIAO DIỆN VÀ PHÍM TẮT
-# ==========================================
 def force_exit():
     global is_running
     if is_running:
         is_running = False
-        # Gửi tín hiệu rỗng để C++ xóa sạch khung vẽ trên màn hình
         sock.sendto(b"EMPTY", (UDP_IP, UDP_PORT))
-        launcher.deiconify() # Hiện lại Menu
+        launcher.deiconify()
 
 keyboard.add_hotkey('ctrl+shift+f', force_exit)
 
@@ -99,7 +107,7 @@ def start_app():
     threading.Thread(target=ai_worker, daemon=True).start()
 
 launcher = tk.Tk()
-launcher.title("AI Minecraft Mob Tracker V2 (C++ Overlay)")
+launcher.title("AI Minecraft Mob Tracker V2")
 launcher.geometry("450x300")
 launcher.configure(bg="#2C2F33")
 launcher.eval('tk::PlaceWindow . center') 
