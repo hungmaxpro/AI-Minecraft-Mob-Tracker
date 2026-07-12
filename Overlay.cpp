@@ -163,6 +163,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     InitializeCriticalSection(&data_cs);
 
     ShellExecuteA(NULL, "open", "AI_model.exe", NULL, "AI_model", SW_SHOW);
+   // ShellExecuteA(NULL, "open", "python", "AI_model.py", NULL, SW_SHOW);
     CreateThread(NULL, 0, UDPListener, NULL, 0, NULL);
 
     WNDCLASSA wc = { 0 };
