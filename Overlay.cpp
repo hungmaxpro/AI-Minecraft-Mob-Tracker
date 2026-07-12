@@ -162,8 +162,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     InitializeCriticalSection(&data_cs);
 
-    // Tự động kích hoạt file Python lên
-    ShellExecuteA(NULL, "open", "AI_model.exe", NULL, NULL, SW_SHOW);
+    ShellExecuteA(NULL, "open", "AI_model.exe", NULL, "AI_model", SW_SHOW);
     CreateThread(NULL, 0, UDPListener, NULL, 0, NULL);
 
     WNDCLASSA wc = { 0 };
