@@ -1,4 +1,4 @@
-# AI Minecraft Mob Tracker V1.0.0 (OpenVINO Optimized)
+# AI Minecraft Mob Tracker (OpenVINO Optimized)
 
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.11-green.svg)
